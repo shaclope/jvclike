@@ -5,24 +5,40 @@
 </head>
 <body>
     <h1>{{ topic.title }}</h1>
-
-    <p>{{ topic.content }}</p>
-
-    <h2>Replies:</h2>
-    <ul>
-        {% for post in topic.post_set.all %}
-            <li>{{ post.content }}</li>
-        {% endfor %}
-    </ul>
-
-
-
     <p>Créé par {{ topic.created_by.username }} le {{ topic.created_at }}</p>
-    <a href="{% url 'new_post' topic.id %}">Nouveau Post</a>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'new_post' topic.id %}">Nouvelle Réponse</a>
+    {% else %}
+        <a href="{% url 'login' %}">Connexion</a> ou <a href="{% url 'signup' %}">Inscription</a> pour répondre.
+    {% endif %}
+    
+    <h2>Réponses :</h2>
     <ul>
-        {% for post in topic.posts.all %}
-            <li>{{ post.message }} - {{ post.created_by.username }} - {{ post.created_at }}</li>
+        {% for post in posts %}
+            <li>
+                <strong>{{ post.created_by.username }}</strong> a dit : {{ post.message }}
+                <br><em>{{ post.created_at }}</em>
+            </li>
         {% endfor %}
     </ul>
+    
+    <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page=1">&laquo; première</a>
+                <a href="?page={{ posts.previous_page_number }}">précédente</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ posts.number }} de {{ posts.paginator.num_pages }}.
+            </span>
+            
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">suivante</a>
+                <a href="?page={{ posts.paginator.num_pages }}">dernière &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </body>
 </html>
