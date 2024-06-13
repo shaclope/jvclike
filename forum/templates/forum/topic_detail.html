@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ topic.title }}</title>
+</head>
+<body>
+    <h1>{{ topic.title }}</h1>
+
+    <p>{{ topic.content }}</p>
+
+    <h2>Replies:</h2>
+    <ul>
+        {% for post in topic.post_set.all %}
+            <li>{{ post.content }}</li>
+        {% endfor %}
+    </ul>
+
+
+
+    <p>Créé par {{ topic.created_by.username }} le {{ topic.created_at }}</p>
+    <a href="{% url 'new_post' topic.id %}">Nouveau Post</a>
+    <ul>
+        {% for post in topic.posts.all %}
+            <li>{{ post.message }} - {{ post.created_by.username }} - {{ post.created_at }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

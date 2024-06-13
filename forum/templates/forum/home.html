@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forum</title>
+</head>
+<body>
+    <h1>Forum</h1>
+    {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Déconnexion</button>
+        </form>
+        <a href="{% url 'new_topic' %}">Nouveau Sujet</a>
+    {% else %}
+        <a href="{% url 'login' %}">Connexion</a>
+        <a href="{% url 'signup' %}">Inscription</a>
+    {% endif %}
+
+    <ul>
+        {% for topic in topics %}
+            <li>
+                <a href="{% url 'topic_detail' topic.id %}">{{ topic.title }}</a> - {{ topic.created_by.username }} - {{ topic.created_at }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Affichage des liens de pagination -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if topics.has_previous %}
+                <a href="?page=1">&laquo; Premier</a>
+                <a href="?page={{ topics.previous_page_number }}">Précédent</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ topics.number }} de {{ topics.paginator.num_pages }}.
+            </span>
+
+            {% if topics.has_next %}
+                <a href="?page={{ topics.next_page_number }}">Suivant</a>
+                <a href="?page={{ topics.paginator.num_pages }}">Dernier &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</body>
+</html>

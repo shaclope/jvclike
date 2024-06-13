@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nouveau Post</title>
+</head>
+<body>
+    <h1>Nouveau Post pour "{{ topic.title }}"</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="message" rows="4" cols="50"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    
+</body>
+</html>
