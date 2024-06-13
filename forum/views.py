@@ -48,7 +48,20 @@ def home(request):
 
 def topic_detail(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
-    return render(request, 'forum/topic_detail.html', {'topic': topic})
+    posts = Post.objects.filter(topic=topic).order_by('created_at')
+    
+    paginator = Paginator(posts, 10)  # 10 posts par page
+    page_number = request.GET.get('page')
+    try:
+        posts = paginator.page(page_number)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request, 'forum/topic_detail.html', {'topic': topic, 'posts': posts})
+
+    
 
 
 @login_required
@@ -57,7 +70,7 @@ def new_topic(request):
         form = TopicForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirigez vers la page d'accueil ou une autre page appropriée
+            return redirect('home') 
     else:
         form = TopicForm()
     return render(request, 'forum/new_topic.html', {'form': form})
